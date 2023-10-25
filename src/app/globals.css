@@ -12,6 +12,14 @@ p {
   color: #fff;
 }
 
+.Typewriter__wrapper .Typewriter__cursor {
+  color: honeydew;
+}
+
+.Typewriter {
+  max-width: 560px;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -1,0 +1,97 @@
+import React from "react";
+import { Download, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/interface/Button";
+
+interface UrlSectionProps {
+  onShowConfetti: () => void;
+  onHandleGetVideoDetails: (videoDetails: any) => void;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const UrlSection = ({
+  isLoading,
+  setIsLoading,
+  onShowConfetti,
+  onHandleGetVideoDetails,
+}: UrlSectionProps) => {
+  const [youtubeUrl, setYoutubeUrl] = React.useState("");
+  const [invalidUrl, setInvalidUrl] = React.useState(false);
+
+  const handleDownload = async () => {
+    resetStates();
+    setIsLoading(true);
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/video?videoUrl=${youtubeUrl}`,
+      { method: "GET" }
+    );
+    const data = await response.json();
+
+    if (response.status === 200) {
+      onHandleGetVideoDetails(data);
+      resetStates();
+      return;
+    }
+
+    window.alert("falha ao buscar video");
+  };
+
+  const resetStates = () => {
+    onShowConfetti();
+    setYoutubeUrl("");
+    setIsLoading(false);
+  };
+
+  const handleUrlChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    handleUrlValidation(value);
+    setYoutubeUrl(value);
+  };
+
+  const handleUrlValidation = (url: string) => {
+    const reggexValidUrl = new RegExp(
+      "^(https?://)?(www.youtube.com|youtu.?be)/.+$"
+    );
+    const isUrlValid = reggexValidUrl.test(url);
+
+    if (!isUrlValid) {
+      setInvalidUrl(true);
+    } else {
+      setInvalidUrl(false);
+    }
+  };
+
+  return (
+    <>
+      <section className="flex items-center gap-4 w-[35rem] mb-2">
+        <Input
+          type="url"
+          placeholder="Cole url do seu vídeo aqui"
+          className={`outline-none border-2 border-purple-700 min-w-80 ${
+            invalidUrl && "border-red-600"
+          }`}
+          value={youtubeUrl}
+          onChange={handleUrlChange}
+        />
+
+        <Button.Root>
+          <Button.Content
+            disabled={invalidUrl || isLoading}
+            onClick={handleDownload}
+          >
+            <Button.Icon
+              icon={isLoading ? <Loader2 className="animate-spin" /> : Download}
+            />
+          </Button.Content>
+        </Button.Root>
+      </section>
+      <Label className="text-red-600">
+        {invalidUrl ? "Url invalida" : " "}
+      </Label>
+    </>
+  );
+};

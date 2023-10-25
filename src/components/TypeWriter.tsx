@@ -2,15 +2,14 @@
 import React from "react";
 import TypewriterComponent from "typewriter-effect";
 
-const TypeWriter = () => {
+const TypeWriter = ({ text }: { text: string }) => {
   return (
     <TypewriterComponent
+      options={{
+        delay: 100,
+      }}
       onInit={(typewriter) => {
-        typewriter
-          .typeString(
-            "<h1 className='text-3xl'><span className='text-purple-700 font-bold'>YT</span> Fetch</h1>"
-          )
-          .start();
+        typewriter.typeString(text).start();
       }}
     />
   );
