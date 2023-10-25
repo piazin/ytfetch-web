@@ -9,14 +9,14 @@ export interface IVideoDetails {
   ];
   video_url: string;
   videoId: string;
-  formats: [
-    {
-      width: number;
-      height: number;
-      container: string;
-      mimeType: string;
-      qualityLabel: string;
-      approxDurationMs: string;
-    }
-  ];
+  formats: IFormat[];
+}
+
+export interface IFormat {
+  width: number;
+  height: number;
+  container: string;
+  mimeType: string;
+  qualityLabel: string;
+  approxDurationMs: string;
 }

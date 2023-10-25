@@ -1,17 +1,10 @@
+import { VideoDetailsSkeleton } from "./Skeleton";
+import { IVideoDetails } from "@/types/VideoDetails";
 import { Button } from "@/components/interface/Button";
+import { SelectFormat } from "@/components/interface/SelectFormat";
+
 import { transformURLInEmbed } from "@/utils/transformURLInEmbed";
 import { getVideoDuration } from "@/utils/convertMillisecondsInMinutes";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { IVideoDetails } from "@/types/VideoDetails";
-import { VideoDetailsSkeleton } from "./videoDetailsSkeleton";
 
 interface VideoDetailsProps {
   videoDetails: IVideoDetails;
@@ -40,22 +33,7 @@ export const VideoDetails = ({
               {getVideoDuration(videoDetails.formats[0]?.approxDurationMs)}{" "}
             </p>
           </div>
-
-          <Select>
-            <SelectTrigger className="text-zinc-800  border-purple-700 w-full">
-              <SelectValue placeholder="Selecionar qualidade" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel className="text-black">Qualidade</SelectLabel>
-                {videoDetails.formats.map((format) => (
-                  <SelectItem value={format.qualityLabel} key={format.width}>
-                    {format.qualityLabel} - {format.container}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectFormat formats={videoDetails.formats} />
           <Button.Root>
             <Button.Content className="w-full">Baixar video</Button.Content>
           </Button.Root>

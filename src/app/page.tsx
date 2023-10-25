@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 
-import Footer from "@/components/interface/Footer";
+import { IVideoDetails } from "@/types/VideoDetails";
+
 import Header from "@/components/interface/Header";
-import { UrlSection } from "@/components/UrlSection";
+import Footer from "@/components/interface/Footer";
 import { Confetti } from "@/components/interface/Confetti";
+import { UrlSection } from "@/components/interface/UrlSection";
 import { HelpSection } from "@/components/interface/HelpSection";
 import { VideoDetails } from "@/components/interface/VideoDetails";
-import { IVideoDetails } from "@/types/VideoDetails";
 
 export default function Home() {
   const [isLoading, setIsLoading] = React.useState(false);
