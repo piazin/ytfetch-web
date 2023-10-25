@@ -10,9 +10,9 @@ export const ButtonContent = ({ children, ...rest }: ButtonContentProps) => {
     <Button
       {...rest}
       type="button"
-      className="bg-purple-700 hover:bg-purple-500/90"
+      className={`bg-purple-700 hover:bg-purple-500/90 ${rest.className}`}
     >
-      {children} Baixar
+      {children}
     </Button>
   );
 };

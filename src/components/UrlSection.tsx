@@ -21,6 +21,8 @@ export const UrlSection = ({
   const [invalidUrl, setInvalidUrl] = React.useState(false);
 
   const handleDownload = async () => {
+    if (!handleUrlValidation(youtubeUrl)) return;
+
     resetStates();
     setIsLoading(true);
 
@@ -32,6 +34,7 @@ export const UrlSection = ({
 
     if (response.status === 200) {
       onHandleGetVideoDetails(data);
+      onShowConfetti();
       resetStates();
       return;
     }
@@ -40,7 +43,6 @@ export const UrlSection = ({
   };
 
   const resetStates = () => {
-    onShowConfetti();
     setYoutubeUrl("");
     setIsLoading(false);
   };
@@ -63,11 +65,13 @@ export const UrlSection = ({
     } else {
       setInvalidUrl(false);
     }
+
+    return isUrlValid;
   };
 
   return (
     <>
-      <section className="flex items-center gap-4 w-[35rem] mb-2">
+      <section className="flex items-center gap-4 min-w-full mb-2">
         <Input
           type="url"
           placeholder="Cole url do seu vídeo aqui"
@@ -86,6 +90,7 @@ export const UrlSection = ({
             <Button.Icon
               icon={isLoading ? <Loader2 className="animate-spin" /> : Download}
             />
+            {isLoading ? "Baixando" : "Baixar"}
           </Button.Content>
         </Button.Root>
       </section>
