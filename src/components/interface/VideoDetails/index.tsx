@@ -1,4 +1,6 @@
+import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
+
 import { VideoDetailsSkeleton } from "./Skeleton";
 import { IVideoDetails } from "@/types/VideoDetails";
 import { Button } from "@/components/interface/Button";
@@ -7,8 +9,8 @@ import { SelectFormat } from "@/components/interface/SelectFormat";
 import { transformURLInEmbed } from "@/utils/transformURLInEmbed";
 import { getVideoDuration } from "@/utils/convertMillisecondsInMinutes";
 
-import { io } from "socket.io-client";
 import { Progress } from "@/components/ui/progress";
+
 interface VideoDetailsProps {
   videoDetails: IVideoDetails;
   isLoading: boolean;
@@ -21,11 +23,17 @@ export const VideoDetails = ({
   const [format, setFormat] = useState<string>("");
   const [jobId, setJobId] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [downloadedInMB, setDownloadedInMB] = useState<string>("0MB");
   const [progressDowload, setProgressDowload] = useState<number>(0);
+  const [estimatedTime, setEstimatedTime] = useState<number>(0);
 
-  const handleDownloadVideo = async () => {
+  const handleProcessDownloadVideo = async () => {
+    if (format === "") return;
+
     setJobId("");
     setProgressDowload(0);
+    setIsProcessing(true);
     const [qualityLabel, type] = format.split("-");
 
     const body = {
@@ -48,6 +56,49 @@ export const VideoDetails = ({
     }
   };
 
+  const handleDownloadVideo = async () => {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/video/${jobId}/download`
+    );
+
+    const reader = response.body?.getReader();
+    const chunks = [];
+
+    for await (const chunk of await readChunks(reader)) {
+      chunks.push(chunk);
+    }
+
+    const videoBlob = new Blob(chunks, { type: "video/mp4" });
+    createLinkDownload(videoBlob);
+  };
+
+  const readChunks = async (
+    reader: ReadableStreamDefaultReader<Uint8Array> | undefined
+  ) => {
+    return {
+      async *[Symbol.asyncIterator]() {
+        let readResult = await reader!.read();
+        while (!readResult.done) {
+          yield readResult.value;
+          readResult = await reader!.read();
+        }
+      },
+    };
+  };
+
+  const createLinkDownload = (videoBlob: Blob) => {
+    const videoUrl = URL.createObjectURL(videoBlob);
+
+    const a = document.createElement("a");
+    a.href = videoUrl;
+    a.download = "video.mp4";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(videoUrl);
+  };
+
   useEffect(() => {
     const socket = io("http://localhost:3000");
 
@@ -68,11 +119,28 @@ export const VideoDetails = ({
       setProgressDowload((prev) =>
         prev === value.percentage ? prev : value.percentage
       );
+      setDownloadedInMB(value.downloadedMb);
+      setEstimatedTime((prev) =>
+        prev === value.estimatedDownloadTime
+          ? prev
+          : value.estimatedDownloadTime
+      );
+    }
+
+    function onCompleted(value: any) {
+      console.log(jobId);
+      if (value.jobId != jobId) return;
+
+      handleDownloadVideo();
+      setProgressDowload(0);
+      setIsProcessing(false);
+      setDownloadedInMB("0MB");
     }
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("video_download_progress", onProgress);
+    socket.on("finished_video_download", onCompleted);
 
     return () => {
       socket.off("connect", onConnect);
@@ -105,13 +173,25 @@ export const VideoDetails = ({
             value={format}
           />
           <Button.Root>
-            <Button.Content className="w-full" onClick={handleDownloadVideo}>
+            <Button.Content
+              className="w-full"
+              onClick={handleProcessDownloadVideo}
+              disabled={isProcessing}
+            >
               Baixar video
             </Button.Content>
           </Button.Root>
 
-          <Progress value={progressDowload} className="w-full " />
-          {connected ? "Conectado" : "Deconectado"}
+          {isProcessing && (
+            <>
+              <div className="w-full flex gap-4 items-center">
+                <span>{downloadedInMB}</span>
+                <Progress value={progressDowload} className="w-full " />
+              </div>
+              <span>tempo estimado {estimatedTime.toFixed(2)} m/s</span>
+              {connected ? "Conectado" : "Deconectado"}
+            </>
+          )}
         </div>
       )}
     </section>
