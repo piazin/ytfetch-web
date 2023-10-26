@@ -10,13 +10,19 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-type SelectFormatProps = {
+interface SelectFormatProps {
+  value: string;
   formats: IFormat[];
-};
+  onValueChange: (value: string) => void;
+}
 
-export const SelectFormat = ({ formats }: SelectFormatProps) => {
+export const SelectFormat = ({
+  formats,
+  value,
+  onValueChange,
+}: SelectFormatProps) => {
   return (
-    <Select>
+    <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="text-zinc-800  border-purple-700 w-full">
         <SelectValue placeholder="Selecionar qualidade" />
       </SelectTrigger>
@@ -24,7 +30,10 @@ export const SelectFormat = ({ formats }: SelectFormatProps) => {
         <SelectGroup>
           <SelectLabel className="text-black">Qualidade</SelectLabel>
           {formats.map((format) => (
-            <SelectItem value={format.qualityLabel} key={format.width}>
+            <SelectItem
+              value={format.qualityLabel + "-" + format.container}
+              key={format.width}
+            >
               {format.qualityLabel} - {format.container}
             </SelectItem>
           ))}
