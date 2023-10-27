@@ -11,6 +11,8 @@ import { transformURLInEmbed } from "@/utils/transformURLInEmbed";
 import { getVideoDuration } from "@/utils/convertMillisecondsInMinutes";
 
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 interface VideoDetailsProps {
   videoDetails: IVideoDetails;
@@ -23,9 +25,10 @@ export const VideoDetails = ({
   videoDetails,
   onShowConfetti,
 }: VideoDetailsProps) => {
+  const { toast } = useToast();
+
   const [jobId, setJobId] = useState<string>("");
   const [format, setFormat] = useState<string>("");
-  const [connected, setConnected] = useState<boolean>(false);
   const [estimatedTime, setEstimatedTime] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [progressDowload, setProgressDowload] = useState<number>(0);
@@ -63,32 +66,43 @@ export const VideoDetails = ({
 
     if (response.status === 201) {
       setJobId(data.jobId);
+    } else {
+      showToastError();
     }
   };
 
   const handleDownloadVideo = async (videoId: string) => {
-    if (videoId === "") {
-      await handleProcessDownloadVideo();
-      return;
+    try {
+      if (videoId === "") {
+        await handleProcessDownloadVideo();
+        return;
+      }
+
+      const response = await fetch(
+        `${config.API_BASE_URL}/video/${videoId}/download`
+      );
+
+      const reader = response.body?.getReader();
+      const chunks = [];
+
+      for await (const chunk of await readChunks(reader)) {
+        chunks.push(chunk);
+      }
+
+      const videoBlob = new Blob(chunks, { type: "video/mp4" });
+      createLinkDownload(videoBlob);
+      resetAllStates();
+      emitEventToDeleteVideo(videoId);
+      setIsProcessing(false);
+      onShowConfetti(true);
+      toast({
+        title: "Seu download foi concluido com sucesso",
+        description: "Obrigado por usar o YTFetch",
+        className: "bg-purple-700 text-white",
+      });
+    } catch (error) {
+      showToastError();
     }
-
-    const response = await fetch(
-      `${config.API_BASE_URL}/video/${videoId}/download`
-    );
-
-    const reader = response.body?.getReader();
-    const chunks = [];
-
-    for await (const chunk of await readChunks(reader)) {
-      chunks.push(chunk);
-    }
-
-    const videoBlob = new Blob(chunks, { type: "video/mp4" });
-    createLinkDownload(videoBlob);
-    resetAllStates();
-    emitEventToDeleteVideo(videoId);
-    setIsProcessing(false);
-    onShowConfetti(true);
   };
 
   const readChunks = async (
@@ -124,16 +138,23 @@ export const VideoDetails = ({
     socket.emit("delete_video", { videoId });
   };
 
+  const showToastError = () => {
+    toast({
+      title: "Ah, ah! Algo deu errado",
+      description: "Ocorreu um erro ao baixar o video",
+      action: (
+        <ToastAction altText="Tente novamente">Tente novamente</ToastAction>
+      ),
+    });
+  };
+
   useEffect(() => {
     function onConnect() {
-      setConnected(true);
+      console.info("connected");
     }
 
     function onDisconnect() {
-      setConnected(false);
-      setTimeout(() => {
-        socket.connect();
-      }, 3000);
+      console.info("disconnected");
     }
 
     function onProgress(value: any) {
@@ -210,7 +231,6 @@ export const VideoDetails = ({
                 <Progress value={progressDowload} className="w-full " />
               </div>
               <span>tempo estimado {estimatedTime.toFixed(2)} m/s</span>
-              {connected ? "Conectado" : "Deconectado"}
             </>
           )}
         </div>
