@@ -2,7 +2,7 @@ import React from "react";
 
 export const HelpSection = () => {
   return (
-    <section className=" text-gray-50 my-12">
+    <section className=" text-gray-50 my-12 self-start ml-1">
       <p>Como posso baixar um vídeo do youtube?</p>
       <ol className="list-decimal list-inside ml-3 mt-3">
         <li>Cole o link do vídeo</li>

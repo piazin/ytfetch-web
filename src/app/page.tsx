@@ -24,14 +24,17 @@ export default function Home() {
           <UrlSection
             isLoading={isLoading}
             setIsLoading={setIsLoading}
-            onShowConfetti={() => setShowConfetti(true)}
             onHandleGetVideoDetails={(videoDetails) => {
               setVideoDetails(videoDetails);
             }}
           />
 
           {videoDetails ? (
-            <VideoDetails videoDetails={videoDetails} isLoading={isLoading} />
+            <VideoDetails
+              videoDetails={videoDetails}
+              isLoading={isLoading}
+              onShowConfetti={(state) => setShowConfetti(state)}
+            />
           ) : (
             <HelpSection />
           )}

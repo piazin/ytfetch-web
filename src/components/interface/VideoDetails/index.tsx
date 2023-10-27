@@ -15,11 +15,13 @@ import { Progress } from "@/components/ui/progress";
 interface VideoDetailsProps {
   videoDetails: IVideoDetails;
   isLoading: boolean;
+  onShowConfetti: (state: boolean) => void;
 }
 
 export const VideoDetails = ({
   isLoading,
   videoDetails,
+  onShowConfetti,
 }: VideoDetailsProps) => {
   const [jobId, setJobId] = useState<string>("");
   const [format, setFormat] = useState<string>("");
@@ -40,6 +42,7 @@ export const VideoDetails = ({
   const handleProcessDownloadVideo = async () => {
     if (format === "") return;
 
+    onShowConfetti(false);
     setIsProcessing(true);
     const [qualityLabel, type] = format.split("-");
 
@@ -85,6 +88,7 @@ export const VideoDetails = ({
     resetAllStates();
     emitEventToDeleteVideo(videoId);
     setIsProcessing(false);
+    onShowConfetti(true);
   };
 
   const readChunks = async (

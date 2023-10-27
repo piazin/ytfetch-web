@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/interface/Button";
 
 interface UrlSectionProps {
-  onShowConfetti: () => void;
   onHandleGetVideoDetails: (videoDetails: any) => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,7 +16,6 @@ interface UrlSectionProps {
 export const UrlSection = ({
   isLoading,
   setIsLoading,
-  onShowConfetti,
   onHandleGetVideoDetails,
 }: UrlSectionProps) => {
   const [youtubeUrl, setYoutubeUrl] = React.useState("");
@@ -37,7 +35,6 @@ export const UrlSection = ({
 
     if (response.status === 200) {
       onHandleGetVideoDetails(data);
-      onShowConfetti();
       resetStates();
       return;
     }
@@ -97,8 +94,8 @@ export const UrlSection = ({
           </Button.Content>
         </Button.Root>
       </section>
-      <Label className="text-red-600">
-        {invalidUrl ? "Url invalida" : " "}
+      <Label className="text-red-600 self-start ml-1 mt-1">
+        {invalidUrl ? "Url Inválida" : " "}
       </Label>
     </>
   );
