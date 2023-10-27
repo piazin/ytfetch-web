@@ -1,4 +1,5 @@
-import { io } from "socket.io-client";
+import config from "@/config";
+import { socket } from "@/lib/socket";
 import { useEffect, useState } from "react";
 
 import { VideoDetailsSkeleton } from "./Skeleton";
@@ -16,24 +17,20 @@ interface VideoDetailsProps {
   isLoading: boolean;
 }
 
-const socket = io("http://localhost:3000");
-
 export const VideoDetails = ({
   isLoading,
   videoDetails,
 }: VideoDetailsProps) => {
   const [jobId, setJobId] = useState<string>("");
   const [format, setFormat] = useState<string>("");
-  const [videoId, setVideoId] = useState<string>("");
   const [connected, setConnected] = useState<boolean>(false);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [downloadedInMB, setDownloadedInMB] = useState<string>("0MB");
-  const [progressDowload, setProgressDowload] = useState<number>(0);
   const [estimatedTime, setEstimatedTime] = useState<number>(0);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [progressDowload, setProgressDowload] = useState<number>(0);
+  const [downloadedInMB, setDownloadedInMB] = useState<string>("0MB");
 
   const resetAllStates = () => {
     setJobId("");
-    setVideoId("");
     setIsProcessing(false);
     setDownloadedInMB("0MB");
     setProgressDowload(0);
@@ -52,7 +49,7 @@ export const VideoDetails = ({
       type,
     };
 
-    const response = await fetch("http://localhost:3000/api/v1/video", {
+    const response = await fetch(`${config.API_BASE_URL}/video`, {
       body: JSON.stringify(body),
       method: "POST",
       headers: {
@@ -73,7 +70,7 @@ export const VideoDetails = ({
     }
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/video/${videoId}/download`
+      `${config.API_BASE_URL}/video/${videoId}/download`
     );
 
     const reader = response.body?.getReader();
@@ -87,6 +84,7 @@ export const VideoDetails = ({
     createLinkDownload(videoBlob);
     resetAllStates();
     emitEventToDeleteVideo(videoId);
+    setIsProcessing(false);
   };
 
   const readChunks = async (
@@ -151,9 +149,7 @@ export const VideoDetails = ({
     async function onCompleted(value: any) {
       if (value.jobId != jobId) return;
 
-      setVideoId(value.videoId);
       setProgressDowload(0);
-      setIsProcessing(false);
       setDownloadedInMB("0MB");
       await handleDownloadVideo(value.videoId);
     }

@@ -1,5 +1,8 @@
 import React from "react";
 import { Download, Loader2 } from "lucide-react";
+
+import config from "@/config";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/interface/Button";
@@ -20,14 +23,14 @@ export const UrlSection = ({
   const [youtubeUrl, setYoutubeUrl] = React.useState("");
   const [invalidUrl, setInvalidUrl] = React.useState(false);
 
-  const handleDownload = async () => {
+  const handleSearchVideoDetailsDownload = async () => {
     if (!handleUrlValidation(youtubeUrl)) return;
 
     resetStates();
     setIsLoading(true);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/video?videoUrl=${youtubeUrl}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/video?videoUrl=${youtubeUrl}`,
       { method: "GET" }
     );
     const data = await response.json();
@@ -85,7 +88,7 @@ export const UrlSection = ({
         <Button.Root>
           <Button.Content
             disabled={invalidUrl || isLoading}
-            onClick={handleDownload}
+            onClick={handleSearchVideoDetailsDownload}
           >
             <Button.Icon
               icon={isLoading ? <Loader2 className="animate-spin" /> : Download}
