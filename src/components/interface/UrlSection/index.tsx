@@ -75,7 +75,7 @@ export const UrlSection = ({
         <Input
           type="url"
           placeholder="Cole url do seu vídeo aqui"
-          className={`outline-none border-2 border-purple-700 min-w-80 ${
+          className={`outline-none  bg-white placeholder:text-slate-800 min-w-80 ${
             invalidUrl && "border-red-600"
           }`}
           value={youtubeUrl}
@@ -86,8 +86,10 @@ export const UrlSection = ({
           <Button.Content
             disabled={invalidUrl || isLoading}
             onClick={handleSearchVideoDetailsDownload}
+            className="dark:text-zinc-100"
           >
             <Button.Icon
+              className="mr-2"
               icon={isLoading ? <Loader2 className="animate-spin" /> : Download}
             />
             {isLoading ? "Baixando" : "Baixar"}

@@ -216,7 +216,7 @@ export const VideoDetails = ({
           />
           <Button.Root>
             <Button.Content
-              className="w-full"
+              className="w-full dark:text-white"
               onClick={handleProcessDownloadVideo}
               disabled={isProcessing}
             >

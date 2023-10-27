@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = JetBrains_Mono({ subsets: ["latin"] });
 
@@ -17,9 +18,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.className} bg-zinc-900 min-h-screen`}>
-        {children}
-        <Toaster />
+      <body className={`${inter.className}`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

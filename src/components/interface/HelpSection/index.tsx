@@ -8,7 +8,7 @@ import React from "react";
 
 export const HelpSection = () => {
   return (
-    <section className=" text-gray-50 my-8 self-start ml-1 w-full">
+    <section className="dark:text-gray-50 my-8 self-start ml-1 w-full">
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger>

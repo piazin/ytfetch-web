@@ -1,16 +1,21 @@
 import { LucideIcon } from "lucide-react";
-import React, { ElementType, ReactElement } from "react";
+import React, { ButtonHTMLAttributes, ElementType, ReactElement } from "react";
 
-interface ButtonIconProps {
+interface ButtonIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ElementType | LucideIcon | ReactElement;
 }
 
-export const ButtonIcon = ({ icon: Icon }: ButtonIconProps) => {
+export const ButtonIcon = ({ icon: Icon, ...props }: ButtonIconProps) => {
   if (React.isValidElement(Icon)) {
     return Icon;
   }
 
   const IconComponent = Icon as ElementType | LucideIcon;
 
-  return <IconComponent className="mr-2 h-4 w-4" />;
+  return (
+    <IconComponent
+      className={`h-4 w-4 ${props.className}`}
+      color={props.color}
+    />
+  );
 };

@@ -28,7 +28,7 @@ export const SelectFormat = ({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel className="text-black">Qualidade</SelectLabel>
+          <SelectLabel>Qualidade</SelectLabel>
           {formats.map((format) => (
             <SelectItem
               value={format.qualityLabel + "-" + format.container}
