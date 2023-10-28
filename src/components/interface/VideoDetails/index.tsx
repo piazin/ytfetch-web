@@ -174,8 +174,6 @@ export const VideoDetails = ({
     async function onCompleted(value: any) {
       if (value.jobId != jobId) return;
 
-      setProgressDowload(0);
-      setDownloadedInMB("0MB");
       await handleDownloadVideo(value.videoId);
     }
 
