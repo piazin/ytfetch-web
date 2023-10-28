@@ -71,7 +71,7 @@ export const UrlSection = ({
 
   return (
     <>
-      <section className="flex items-center gap-4 min-w-full mb-2">
+      <section className="flex items-center gap-4 min-w-full mb-2 flex-col sm:flex-row">
         <Input
           type="url"
           placeholder="Cole url do seu vídeo aqui"
@@ -86,7 +86,7 @@ export const UrlSection = ({
           <Button.Content
             disabled={invalidUrl || isLoading}
             onClick={handleSearchVideoDetailsDownload}
-            className="dark:text-zinc-100"
+            className="dark:text-zinc-100 w-full sm:w-auto"
           >
             <Button.Icon
               className="mr-2"

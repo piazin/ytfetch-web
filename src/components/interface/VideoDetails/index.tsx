@@ -204,7 +204,7 @@ export const VideoDetails = ({
               height={188}
               className="rounded-md"
             ></iframe>
-            <p className="mt-3 max-w-[366px]">
+            <p className="mt-3 max-w-[366px] text-zinc-900 dark:text-zinc-50">
               {videoDetails.title} -{" "}
               {getVideoDuration(videoDetails.formats[0]?.approxDurationMs)}{" "}
             </p>

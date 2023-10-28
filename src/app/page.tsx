@@ -20,7 +20,7 @@ export default function Home() {
       {showConfetti && <Confetti />}
       <Header />
       <main className="min-h-[80vh] dark:bg-zinc-900 ">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[666px] h-[666px] flex flex-col justify-center items-center">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[666px] h-[666px] flex flex-col justify-center items-center">
           <UrlSection
             isLoading={isLoading}
             setIsLoading={setIsLoading}
