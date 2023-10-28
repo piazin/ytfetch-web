@@ -91,10 +91,10 @@ export const VideoDetails = ({
 
       const videoBlob = new Blob(chunks, { type: "video/mp4" });
       createLinkDownload(videoBlob);
-      resetAllStates();
       emitEventToDeleteVideo(videoId);
       setIsProcessing(false);
       onShowConfetti(true);
+      resetAllStates();
       toast({
         title: "Seu download foi concluido com sucesso",
         description: "Obrigado por usar o YTFetch",

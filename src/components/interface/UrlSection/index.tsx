@@ -90,7 +90,9 @@ export const UrlSection = ({
           >
             <Button.Icon
               className="mr-2"
-              icon={isLoading ? <Loader2 className="animate-spin" /> : Download}
+              icon={
+                isLoading ? <Loader2 className="animate-spin mr-2" /> : Download
+              }
             />
             {isLoading ? "Baixando" : "Baixar"}
           </Button.Content>
