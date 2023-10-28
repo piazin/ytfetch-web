@@ -197,14 +197,14 @@ export const VideoDetails = ({
         <VideoDetailsSkeleton />
       ) : (
         <div className="flex items-center flex-col  gap-6 w-full">
-          <div className="flex justify-center items-center gap-8">
+          <div className="flex flex-col  justify-center items-center gap-8 sm:flex-row">
             <iframe
               src={transformURLInEmbed(videoDetails.video_url)}
               width={336}
               height={188}
-              className="rounded-md"
+              className="rounded-md max-w-[80vw]"
             ></iframe>
-            <p className="mt-3 max-w-[366px] text-zinc-900 dark:text-zinc-50">
+            <p className="mt-3 max-w-[366px] text-zinc-900 dark:text-zinc-50 text-center">
               {videoDetails.title} -{" "}
               {getVideoDuration(videoDetails.formats[0]?.approxDurationMs)}{" "}
             </p>
@@ -227,10 +227,14 @@ export const VideoDetails = ({
           {isProcessing && (
             <>
               <div className="w-full flex gap-4 items-center">
-                <span>{downloadedInMB}</span>
+                <span className="text-zinc-900 dark:text-zinc-50">
+                  {downloadedInMB}
+                </span>
                 <Progress value={progressDowload} className="w-full " />
               </div>
-              <span>tempo estimado {estimatedTime.toFixed(2)} m/s</span>
+              <span className="text-zinc-900 dark:text-zinc-50">
+                tempo estimado {estimatedTime.toFixed(2)} m/s
+              </span>
             </>
           )}
         </div>
