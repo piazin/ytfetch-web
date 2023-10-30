@@ -242,7 +242,7 @@ export const VideoDetails = ({
               onClick={handleProcessDownloadVideo}
               disabled={isProcessing}
             >
-              Baixar video
+              Baixar {convertToMp3 ? "audio" : "video"}
             </Button.Content>
           </Button.Root>
 
