@@ -13,6 +13,8 @@ import { getVideoDuration } from "@/utils/convertMillisecondsInMinutes";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface VideoDetailsProps {
   videoDetails: IVideoDetails;
@@ -31,6 +33,7 @@ export const VideoDetails = ({
   const [format, setFormat] = useState<string>("");
   const [estimatedTime, setEstimatedTime] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [convertToMp3, setConvertToMp3] = useState<boolean>(false);
   const [progressDowload, setProgressDowload] = useState<number>(0);
   const [downloadedInMB, setDownloadedInMB] = useState<string>("0MB");
 
@@ -40,6 +43,11 @@ export const VideoDetails = ({
     setDownloadedInMB("0MB");
     setProgressDowload(0);
     setEstimatedTime(0);
+  };
+
+  const handleCheckedChange = (checked: boolean) => {
+    setFormat(checked ? "1080p-mp3" : "");
+    setConvertToMp3(checked);
   };
 
   const handleProcessDownloadVideo = async () => {
@@ -78,6 +86,9 @@ export const VideoDetails = ({
         return;
       }
 
+      const [_, extension] = videoId.split(".");
+      const mimeType = extension === "mp4" ? "video/mp4" : "audio/mp3";
+
       const response = await fetch(
         `${config.API_BASE_URL}/video/${videoId}/download`
       );
@@ -89,8 +100,8 @@ export const VideoDetails = ({
         chunks.push(chunk);
       }
 
-      const videoBlob = new Blob(chunks, { type: "video/mp4" });
-      createLinkDownload(videoBlob);
+      const videoBlob = new Blob(chunks, { type: mimeType });
+      createLinkDownload(videoBlob, `${videoDetails.title}.${extension}`);
       emitEventToDeleteVideo(videoId);
       setIsProcessing(false);
       onShowConfetti(true);
@@ -119,14 +130,12 @@ export const VideoDetails = ({
     };
   };
 
-  const createLinkDownload = (videoBlob: Blob) => {
+  const createLinkDownload = (videoBlob: Blob, videoTitle: string) => {
     const videoUrl = URL.createObjectURL(videoBlob);
 
     const a = document.createElement("a");
     a.href = videoUrl;
-    a.download = videoDetails.title.includes(".mp4")
-      ? videoDetails.title
-      : `${videoDetails.title}.mp4`;
+    a.download = videoTitle;
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
@@ -207,11 +216,26 @@ export const VideoDetails = ({
               {getVideoDuration(videoDetails.formats[0]?.approxDurationMs)}{" "}
             </p>
           </div>
-          <SelectFormat
-            formats={videoDetails.formats}
-            onValueChange={(value) => setFormat(value)}
-            value={format}
-          />
+          <div className="flex self-start items-center gap-2">
+            <Switch
+              id="convertMp3"
+              onCheckedChange={handleCheckedChange}
+              checked={convertToMp3}
+            />
+            <Label
+              htmlFor="convertMp3"
+              className="text-zinc-900 dark:text-zinc-50"
+            >
+              Converter esse vídeo em audio (.mp3)?
+            </Label>
+          </div>
+          {!convertToMp3 && (
+            <SelectFormat
+              formats={videoDetails.formats}
+              onValueChange={(value) => setFormat(value)}
+              value={format}
+            />
+          )}
           <Button.Root>
             <Button.Content
               className="w-full dark:text-white"
