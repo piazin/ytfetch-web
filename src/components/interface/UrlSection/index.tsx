@@ -6,6 +6,7 @@ import config from "@/config";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/interface/Button";
+import { useToast } from "@/components/ui/use-toast";
 
 interface UrlSectionProps {
   onHandleGetVideoDetails: (videoDetails: any) => void;
@@ -18,28 +19,37 @@ export const UrlSection = ({
   setIsLoading,
   onHandleGetVideoDetails,
 }: UrlSectionProps) => {
+  const { toast } = useToast();
+
   const [youtubeUrl, setYoutubeUrl] = React.useState("");
   const [invalidUrl, setInvalidUrl] = React.useState(false);
 
   const handleSearchVideoDetailsDownload = async () => {
     if (!handleUrlValidation(youtubeUrl)) return;
-
     resetStates();
     setIsLoading(true);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/video?videoUrl=${youtubeUrl}`,
-      { method: "GET" }
-    );
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/video?videoUrl=${youtubeUrl}`,
+        { method: "GET" }
+      );
+      const data = await response.json();
 
-    if (response.status === 200) {
-      onHandleGetVideoDetails(data);
+      if (response.status === 200) {
+        onHandleGetVideoDetails(data);
+        resetStates();
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Erro ao baixar vídeo",
+        description: "Tente novamente mais tarde",
+        className: "bg-red-600",
+      });
+    } finally {
       resetStates();
-      return;
     }
-
-    window.alert("falha ao buscar video");
   };
 
   const resetStates = () => {
