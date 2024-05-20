@@ -7,7 +7,7 @@ export interface IVideoDetails {
       height: number;
     }
   ];
-  video_url: string;
+  videoUrl: string;
   videoId: string;
   formats: IFormat[];
 }

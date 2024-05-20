@@ -58,7 +58,7 @@ export const VideoDetails = ({
     const [qualityLabel, type] = format.split("-");
 
     const body = {
-      youtubeVideoUrl: videoDetails.video_url,
+      youtubeVideoUrl: videoDetails.videoUrl,
       qualityLabel,
       type,
     };
@@ -206,7 +206,7 @@ export const VideoDetails = ({
         <div className="flex items-center flex-col  gap-6 w-full">
           <div className="flex flex-col  justify-center items-center gap-8 sm:flex-row">
             <iframe
-              src={transformURLInEmbed(videoDetails.video_url)}
+              src={transformURLInEmbed(videoDetails.videoUrl)}
               width={336}
               height={188}
               className="rounded-md max-w-[80vw]"

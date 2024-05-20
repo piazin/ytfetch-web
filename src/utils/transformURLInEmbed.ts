@@ -1,3 +1,3 @@
 export const transformURLInEmbed = (youtubeUrl: string) => {
-  return youtubeUrl.replace("watch", "embed/").replace("?v=", "/");
+  return youtubeUrl?.replace("watch", "embed/").replace("?v=", "/");
 };
